@@ -2,15 +2,14 @@ use regex::Regex;
 use std::env;
 
 fn main() {
-    let valid_args: [&str; 10] = [
+    let valid_args: [&str; 9] = [
         "--list",
         "--help",
         "--current",
-        "-cv",
         "-h",
         "use <php_version>",
         "-i",
-        "--install",
+        "--install <version>",
         "--remove",
         "-r",
     ];
@@ -37,9 +36,30 @@ fn invalid_argument_given() {
     println!("Invalid argument given, for a list of valid arguments type pvm --help or pvm -h");
 }
 fn show_help(version: &str) {
+    println!("PVM running version v{}", version);
+    println!("{:<20} : {}", "--list", "List all installed PHP versions");
+    println!("{:<20} : {}", "--help", "Show help");
+    println!("{:<20} : {}", "-h", "Show help");
+    println!("{:<20} : {}", "--current", "Show current PHP running");
     println!(
-        "PVM running version v{}\nSupported arguments: \n --list, --help, -h, use <php_version>, -i, --install, -r, --remove",
-        version
+        "{:<20} : {}",
+        "use <php_version>", "Switch to the specified PHP version"
+    );
+    println!(
+        "{:<20} : {}",
+        "-i <version>", "Switch to the specified PHP version"
+    );
+    println!(
+        "{:<20} : {}",
+        "--install <version>", "Install the specified PHP version"
+    );
+    println!(
+        "{:<20} : {}",
+        "--remove <version>", "Remove the specified PHP version"
+    );
+    println!(
+        "{:<20} : {}",
+        "-r <version>", "Remove the specified PHP version"
     );
 }
 fn current_php_v() {
