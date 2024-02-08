@@ -9,7 +9,7 @@ fn main() {
         "--help",
         "--current",
         "-h",
-        "use <php_version>",
+        "--use",
         "-i",
         "--install <version>",
         "--remove",
@@ -29,17 +29,23 @@ fn main() {
             "--help" | "-h" => show_help(&version),
             "-cv" | "--current" => current_php_v(),
             "--list" => list_php_versions(&php_dir),
+            "--use" => switch_php_version(&args),
             _ => invalid_argument_given(),
         }
     } else {
         invalid_argument_given()
     }
 }
+fn switch_php_version(arg: &Vec<String>) {
+    if arg.len() < 3 {
+        println!("PHP version was not given.\nYou can type pvm -h or --help to look for details.")
+    }
+}
 fn invalid_argument_given() {
-    println!("Invalid argument given, for a list of valid arguments type pvm --help or pvm -h");
+    println!("Invalid argument given. For a list of valid arguments type pvm --help or pvm -h");
 }
 fn show_help(version: &str) {
-    println!("PVM running version v{}", version);
+    println!("PVM running version v{}\n", version);
     println!("{:<20} : {}", "--list", "List all installed PHP versions");
     println!("{:<20} : {}", "--help", "Show help");
     println!("{:<20} : {}", "-h", "Show help");
@@ -112,21 +118,21 @@ fn return_current_php_v() -> String {
 }
 
 fn list_php_versions(path: &str) {
-    let paths = fs::read_dir(path).unwrap();
     let re = Regex::new(r"php(\d+\.\d+\.\d+)$").unwrap();
     let php_v = return_current_php_v();
 
     println!("Instaled PHP versions\n");
-
-    for path in paths {
-        if let Ok(entry) = path {
-            if let Some(file_name) = entry.file_name().into_string().ok() {
-                if let Some(captures) = re.captures(&file_name) {
-                    if let Some(version) = captures.get(1) {
-                        if version.as_str() == php_v {
-                            println!("{} * (Currently using)", version.as_str());
-                        } else {
-                            println!("{}", version.as_str());
+    if let Ok(paths) = fs::read_dir(path) {
+        for path in paths {
+            if let Ok(entry) = path {
+                if let Some(file_name) = entry.file_name().into_string().ok() {
+                    if let Some(captures) = re.captures(&file_name) {
+                        if let Some(version) = captures.get(1) {
+                            if version.as_str() == php_v {
+                                println!("{} * (Currently using)", version.as_str());
+                            } else {
+                                println!("{}", version.as_str());
+                            }
                         }
                     }
                 }
