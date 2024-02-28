@@ -85,8 +85,24 @@ fn verify_arg(arg_given: &str, path: &str) -> bool {
 fn invalid_argument_given() {
     println!("Invalid argument given. For a list of valid arguments type pvm --help or pvm -h");
 }
+fn print_logo() {
+    println!("      ___                       ___     ");
+    println!("     /\\  \\        ___          /\\  \\    ");
+    println!("    /::\\  \\      /\\  \\        |::\\  \\   ");
+    println!("   /:/\\:\\__\\     \\:\\  \\       |:|:\\  \\  ");
+    println!("  /:/ /:/  /      \\:\\  \\    __|:|:\\   \\ ");
+    println!(" /:/_/:/  /   ___  \\:\\__\\  /::::|_\\:\\__\\");
+    println!(" \\:\\/:/  /   /\\  \\ |:|  |  \\:\\--\\  \\/__/");
+    println!("  \\::/__/    \\:\\  \\|:|  |   \\:\\  \\     ");
+    println!("   \\:\\  \\     \\:\\__|:|__|    \\:\\  \\    ");
+    println!("    \\:\\__\\     \\::::/__/      \\:\\__\\   ");
+    println!("     \\/__/      \\____/         \\/__/   ");
+    println!("\n");
+}
 fn show_help(version: &str) {
     println!("PVM running version v{}\n", version);
+    print_logo();
+    println!("Functions:");
     println!(
         "{:<20} : {}",
         "--list", "List all installed PHP versions (ok)"
@@ -96,7 +112,8 @@ fn show_help(version: &str) {
     println!("{:<20} : {}", "--current", "Show current PHP running (ok)");
     println!(
         "{:<20} : {}",
-        "--use <php_version>", "Switch to the specified PHP version"
+        "--use <php_version>",
+        "Switch to the specified PHP version (ok, needs to be implemented to real path)"
     );
     println!(
         "{:<20} : {}",
