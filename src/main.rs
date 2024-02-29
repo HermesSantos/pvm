@@ -2,6 +2,9 @@ use regex::Regex;
 use std::env;
 use std::fs;
 
+mod php_handler;
+mod print_logo;
+
 fn main() {
     let php_dir: &str = "C:\\wamp64\\bin\\php";
     let valid_args: [&str; 9] = [
@@ -27,8 +30,9 @@ fn main() {
     if valid_args.contains(&first_arg.as_str()) {
         match first_arg.as_str() {
             "--help" | "-h" => show_help(&version),
-            "-cv" | "--current" => current_php_v(),
-            "--list" => list_php_versions(&php_dir),
+            "-cv" | "--current" => php_handler::path_handler::current_php_v(),
+            // "--list" => php_handler::list_php_versions(&php_dir),
+            "--list" => php_handler::path_handler::list_php_versions(&php_dir),
             "--use" => switch_php_version(&args[2]),
             _ => invalid_argument_given(),
         }
@@ -85,23 +89,9 @@ fn verify_arg(arg_given: &str, path: &str) -> bool {
 fn invalid_argument_given() {
     println!("Invalid argument given. For a list of valid arguments type pvm --help or pvm -h");
 }
-fn print_logo() {
-    println!("      ___                       ___     ");
-    println!("     /\\  \\        ___          /\\  \\    ");
-    println!("    /::\\  \\      /\\  \\        |::\\  \\   ");
-    println!("   /:/\\:\\__\\     \\:\\  \\       |:|:\\  \\  ");
-    println!("  /:/ /:/  /      \\:\\  \\    __|:|:\\   \\ ");
-    println!(" /:/_/:/  /   ___  \\:\\__\\  /::::|_\\:\\__\\");
-    println!(" \\:\\/:/  /   /\\  \\ |:|  |  \\:\\--\\  \\/__/");
-    println!("  \\::/__/    \\:\\  \\|:|  |   \\:\\  \\     ");
-    println!("   \\:\\  \\     \\:\\__|:|__|    \\:\\  \\    ");
-    println!("    \\:\\__\\     \\::::/__/      \\:\\__\\   ");
-    println!("     \\/__/      \\____/         \\/__/   ");
-    println!("\n");
-}
 fn show_help(version: &str) {
     println!("PVM running version v{}\n", version);
-    print_logo();
+    print_logo::print_full_logo();
     println!("Functions:");
     println!(
         "{:<20} : {}",
@@ -143,73 +133,4 @@ fn return_current_path() -> String {
         }
     }
     return "".to_string();
-}
-
-fn current_php_v() {
-    if let Ok(path) = env::var("path") {
-        let parts: Vec<&str> = path.split(';').collect();
-
-        for part in parts {
-            if part.contains("wamp64\\bin\\php\\") {
-                let re = Regex::new(r"php(\d+\.\d+\.\d+)$").unwrap();
-
-                if let Some(capturas) = re.captures(part) {
-                    if let Some(versao) = capturas.get(1) {
-                        println!("Current PHP running: {}", versao.as_str());
-                    }
-                } else {
-                    println!("No PHP versions found on path");
-                }
-            }
-        }
-    } else {
-        println!("erro")
-    }
-}
-
-fn return_current_php_v() -> String {
-    if let Ok(path) = env::var("path") {
-        let parts: Vec<&str> = path.split(';').collect();
-
-        for part in parts {
-            if part.contains("wamp64\\bin\\php\\") {
-                let re = Regex::new(r"php(\d+\.\d+\.\d+)$").unwrap();
-
-                if let Some(capturas) = re.captures(part) {
-                    if let Some(versao) = capturas.get(1) {
-                        return versao.as_str().to_string();
-                    }
-                } else {
-                    return "Error".to_string();
-                }
-            }
-        }
-        return "Error".to_string();
-    } else {
-        return "Error".to_string();
-    }
-}
-
-fn list_php_versions(path: &str) {
-    let re = Regex::new(r"php(\d+\.\d+\.\d+)$").unwrap();
-    let php_v = return_current_php_v();
-
-    println!("Instaled PHP versions\n");
-    if let Ok(paths) = fs::read_dir(path) {
-        for path in paths {
-            if let Ok(entry) = path {
-                if let Some(file_name) = entry.file_name().into_string().ok() {
-                    if let Some(captures) = re.captures(&file_name) {
-                        if let Some(version) = captures.get(1) {
-                            if version.as_str() == php_v {
-                                println!("{} * (Currently using)", version.as_str());
-                            } else {
-                                println!("{}", version.as_str());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
