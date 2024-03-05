@@ -1,4 +1,6 @@
 pub mod help_handler {
+    use crate::print_logo;
+
     pub fn show_help(version: &str) {
         println!("PVM running version v{}\n", version);
         print_logo::print_full_logo();
