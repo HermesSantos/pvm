@@ -4,10 +4,11 @@ use std::fs;
 
 mod php_handler;
 mod print_logo;
+mod verify_server;
 
 fn main() {
     let php_dir: &str = "C:\\wamp64\\bin\\php";
-    let valid_args: [&str; 9] = [
+    let valid_args: [&str; 10] = [
         "--list",
         "--help",
         "--current",
@@ -16,6 +17,7 @@ fn main() {
         "-i",
         "--install <version>",
         "--remove",
+        "--testes",
         "-r",
     ];
     let version: &str = "1.0.0";
@@ -31,9 +33,9 @@ fn main() {
         match first_arg.as_str() {
             "--help" | "-h" => show_help(&version),
             "-cv" | "--current" => php_handler::path_handler::current_php_v(),
-            // "--list" => php_handler::list_php_versions(&php_dir),
             "--list" => php_handler::path_handler::list_php_versions(&php_dir),
             "--use" => switch_php_version(&args[2]),
+            "--testes" => verify_server::verify_server(),
             _ => invalid_argument_given(),
         }
     } else {
@@ -107,19 +109,19 @@ fn show_help(version: &str) {
     );
     println!(
         "{:<20} : {}",
-        "-i <version>", "Install the specified PHP version"
+        "-i <php_version>", "Install the specified PHP version"
     );
     println!(
         "{:<20} : {}",
-        "--install <version>", "Install the specified PHP version"
+        "--install <php_version>", "Install the specified PHP version"
     );
     println!(
         "{:<20} : {}",
-        "--remove <version>", "Remove the specified PHP version"
+        "--remove <php_version>", "Remove the specified PHP version"
     );
     println!(
         "{:<20} : {}",
-        "-r <version>", "Remove the specified PHP version"
+        "-r <php_version>", "Remove the specified PHP version"
     );
 }
 
